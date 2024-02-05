@@ -1,0 +1,89 @@
+
+ifndef NDDSHOME
+NDDSHOME := "/home/wenke/Work/rti_connext_dds-6.1.1"
+endif
+
+SOURCE_DIR = 
+
+TARGET_ARCH = x64Linux4gcc7.3.0
+
+
+ifndef COMPILER
+COMPILER = $(COMPILER_PATH)$(GCC_PREFIX)g++
+endif
+COMPILER_FLAGS = -m64 -Wall $(ADDITIONAL_COMPILER_FLAGS) -std=c++14
+ifndef LINKER
+LINKER = $(COMPILER_PATH)$(GCC_PREFIX)g++
+endif
+LINKER_FLAGS = -m64 $(ADDITIONAL_LINKER_FLAGS)
+SYSLIBS = -ldl -lm -lpthread -lrt -no-pie -rdynamic
+DEFINES = -DRTI_UNIX -DRTI_LINUX -DRTI_64BIT 
+ifndef DEBUG
+DEBUG=0 
+endif
+ifeq ($(DEBUG),1)
+COMPILER_FLAGS += -g -O0
+LINKER_FLAGS += -g
+DEBUG_SFX = d
+else
+DEBUG_SFX = 
+endif
+ 
+ifndef SHAREDLIB
+SHAREDLIB=0
+endif
+
+ifeq ($(SHAREDLIB),1)
+SHAREDLIB_SFX = 
+else
+SHAREDLIB_SFX = z
+DEFINES += -DRTI_STATIC
+endif
+
+
+
+INCLUDES = -I. -I$(NDDSHOME)/include -I$(NDDSHOME)/include/ndds -I$(NDDSHOME)/include/ndds/hpp 
+       
+LIBS = -L$(NDDSHOME)/lib/$(TARGET_ARCH) \
+        \
+        \
+        -lnddscpp2$(SHAREDLIB_SFX)$(DEBUG_SFX) -lnddsc$(SHAREDLIB_SFX)$(DEBUG_SFX) -lnddscore$(SHAREDLIB_SFX)$(DEBUG_SFX) \
+        $(SYSLIBS)
+
+CDRSOURCES    = listeners.idl
+SOURCES = $(SOURCE_DIR)listenersPlugin.cxx $(SOURCE_DIR)listeners.cxx
+COMMONSOURCES = $(notdir $(SOURCES))
+
+EXEC          = listeners_subscriber listeners_publisher
+DIRECTORIES   = objs.dir objs/$(TARGET_ARCH).dir
+COMMONOBJS    = $(COMMONSOURCES:%.cxx=objs/$(TARGET_ARCH)/%.o)
+
+# We actually stick the objects in a sub directory to keep your directory clean.
+$(TARGET_ARCH) : $(DIRECTORIES) $(COMMONOBJS) \
+	$(EXEC:%=objs/$(TARGET_ARCH)/%.o) \
+	$(EXEC:%=objs/$(TARGET_ARCH)/%)
+
+objs/$(TARGET_ARCH)/% : objs/$(TARGET_ARCH)/%.o
+	$(LINKER) $(LINKER_FLAGS) -o $@ $@.o $(COMMONOBJS) $(LIBS)
+
+objs/$(TARGET_ARCH)/%.o : $(SOURCE_DIR)%.cxx   $(SOURCE_DIR)listeners.hpp 
+	$(COMPILER) $(COMPILER_FLAGS) -o $@ $(DEFINES) $(INCLUDES) -c $<
+
+#
+# Uncomment these lines if you want the support files regenerated when idl
+# file is modified
+#
+#
+#  $(SOURCE_DIR)listenersPlugin.cxx $(SOURCE_DIR)listeners.cxx \
+#  $(SOURCE_DIR)listeners.hpp $(SOURCE_DIR)listenersPlugin.hpp $(SOURCE_DIR)application.hpp : \
+#		$(SOURCE_DIR)listeners.idl
+#	$(NDDSHOME)/bin/rtiddsgen $(SOURCE_DIR)listeners.idl -replace -language C++11
+#
+# Here is how we create those subdirectories automatically.
+%.dir : 
+	@echo "Checking directory $*"
+	@if [ ! -d $* ]; then \
+		echo "Making directory $*"; \
+		mkdir -p $* ; \
+	fi;
+
