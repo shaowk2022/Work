@@ -1,5 +1,10 @@
 build_path=$(pwd)/build
 
+if [ ! -d $build_path ]; then
+    echo "build/ not exists, create build/ ..."
+    mkdir build
+fi
+
 if [ -z $build_path ]; then
     echo "build is empty"
 else
