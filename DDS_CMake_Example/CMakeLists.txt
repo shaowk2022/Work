@@ -23,8 +23,8 @@ link_directories(${NDDSHOME}/lib/${TARGET_ARCH})
 set(COMPLIER_FLAGS -m64 -Wall -std=c++14 -DRTI_UNIX -DRTI_LINUX -DRTI_64BIT)
 add_compile_options(${COMPLIER_FLAGS})
 
-set(SUB_FILE "${CMAKE_CURRENT_SOURCE_DIR}/listeners_subscriber.cxx")
-set(PUB_FILE "${CMAKE_CURRENT_SOURCE_DIR}/listeners_publisher.cxx")
+set(SUB_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/listeners_subscriber.cxx")
+set(PUB_FILE "${CMAKE_CURRENT_SOURCE_DIR}/src/listeners_publisher.cxx")
 
 # 设置头文件目录和链接库名称
 set(INCLUDE_DIR 
@@ -45,7 +45,7 @@ set(LIBRARIES
 )
 
 # 找到所有源文件
-file(GLOB SRC_LIST ${CMAKE_CURRENT_SOURCE_DIR}/*.cxx)
+file(GLOB SRC_LIST ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cxx)
 # 排除subscriber源文件
 list(REMOVE_ITEM SRC_LIST ${SUB_FILE})
 add_executable(Example_Publisher ${SRC_LIST})

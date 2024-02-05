@@ -1,4 +1,4 @@
-build_path=/home/wenke/Study/Cpp/project_1/DDS_CMake_Example/build
+build_path=$(pwd)/build
 
 if [ -z $build_path ]; then
     echo "build is empty"
