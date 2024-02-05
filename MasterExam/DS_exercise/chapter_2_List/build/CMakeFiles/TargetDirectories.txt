@@ -1,3 +1,0 @@
-/home/wenke/Study/MasterExam/DS_exercise/chapter_2_List/build/CMakeFiles/rebuild_cache.dir
-/home/wenke/Study/MasterExam/DS_exercise/chapter_2_List/build/CMakeFiles/edit_cache.dir
-/home/wenke/Study/MasterExam/DS_exercise/chapter_2_List/build/CMakeFiles/main.dir

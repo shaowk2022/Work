@@ -1,1 +1,0 @@
-/usr/bin/cc    CMakeFiles/main.dir/src/Lists_app.c.o CMakeFiles/main.dir/src/Lists_crud.c.o CMakeFiles/main.dir/src/main.c.o  -o ../bin/main 
